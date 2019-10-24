@@ -23,6 +23,8 @@ export class AppComponent implements OnInit, AfterViewInit  {
   leaveObj: any;
   verifySentance: any;
   language = 'en-US';
+  inputText: any = "";
+  qText: any = "";
 
   constructor(private zone: NgZone, fb: FormBuilder) {
     this.options = fb.group({});
@@ -178,5 +180,40 @@ export class AppComponent implements OnInit, AfterViewInit  {
     speech.pitch = 1;
     window.speechSynthesis.speak(speech);
   }
+  
+  startListening() {
+      this.record().subscribe(
+        //listener
+        (value) => {
+          this.inputText = value;
+          console.log(value);
+        },
+        //errror
+        (err) => {
+          console.log(err);
+          if (err.error == "no-speech") {
+            console.log("--restatring service--");
+          }
+        },
+        //completion
+        () => {
+          console.log("--complete--");
+        });
+      this.recognition.start();
+    }
+
+    pushQuestion() {
+      this.recognition.stop();
+      this.qText = this.inputText;
+      this.inputText = "";
+      
+      let questions = [{"q":"what is your name", "val":"coMakeIT"}, {"q":"what is your age", "val":"16"}, {"q":"where are you from", "val":"NetherLands"}];
+      for(let i=0; i < questions.length; i++) {
+        if(questions[i].q == this.qText) {
+          this.qText = questions[i].val;
+          this.readOutLoud(this.qText);
+          }
+      }
+    }
 
 }

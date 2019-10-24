@@ -11,7 +11,6 @@
       </mat-radio-group>
     </div>
 
-
     <mat-form-field>
       <input matInput placeholder="Title" [(ngModel)]="title">
       <mat-icon matSuffix (click)="titleStartRecognition()">mic</mat-icon>
@@ -27,9 +26,7 @@
         <mat-option value="sick">Sick</mat-option>
         <mat-option value="other">Other</mat-option>
       </mat-select>
-      <mat-label>
-        Leave Type
-      </mat-label>
+      <mat-label>Leave Type</mat-label>
       <mat-icon matSuffix (click)="typeStartRecognition()" >mic</mat-icon>
     </mat-form-field>
     <div class="example-button-row">
@@ -38,3 +35,17 @@
     </div>
   </div>
 </div>
+
+
+<div style="width: 400px; height: 400px; position: relative; margin-top: 100px;">
+    <h3>Chat Bot</h3>
+    <textarea id="txtarea" style="width: 400px; height:340px; resize: none; padding: 0; margin: 0;" readonly [(ngModel)]="qText"></textarea>
+	<div style="width: 400px; height: 57px; position: absolute; bottom: 0; border: 1px solid rgb(169, 169, 169);">
+		<input id="txt" [(ngModel)]="inputText" placeholder="How can I help you" style="width: 325px; height: 97%; border: none; padding-left: 10px;"/>
+		<span style="flex-direction: column;width: 64px;display: inline-flex;vertical-align: top;border-left: 1px solid rgb(169, 169, 169);">
+			<button (click)="startListening()">Mic</button>
+			<button (click)="pushQuestion()" style="margin-top: 15px;">send</button>
+		</span>
+	</div>
+</div>
+
