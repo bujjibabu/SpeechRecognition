@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -10,7 +10,7 @@ declare let window;
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent implements OnInit, AfterViewInit  {
+export class AppComponent implements OnInit  {
   @ViewChild('mySelect', {static: false}) mySelect: any;
   speechRecognition: any;
   recognition: any;
@@ -27,6 +27,7 @@ export class AppComponent implements OnInit, AfterViewInit  {
   inputText: any = "";
   qText: any = "";
   agendaDetails: any;
+  obj: any;
 
   constructor(private zone: NgZone, fb: FormBuilder, private http: HttpClient) {
     this.options = fb.group({});
@@ -38,16 +39,20 @@ export class AppComponent implements OnInit, AfterViewInit  {
       console.error(e);
       this.noSupport = true;
     }
-  }
 
-  ngAfterViewInit() {
-   // this.mySelect.open();
+    this.obj = {
+      date: '',
+      time: '',
+      subject: ''
+    };
   }
 
   getAgendaDetails() {
-    this.http.get('https://my-json-server.typicode.com/bujjibabu/demo/agenda').subscribe((data: any[]) => {
-      this.agendaDetails = data.items;
-      console.log(this.agendaDetails);
+    this.http.get('https://my-json-server.typicode.com/bujjibabu/demo/agenda').subscribe((data) => {
+      if(data) {
+        this.agendaDetails = data.items;
+        console.log(this.agendaDetails);
+      }
     });
   }
 
@@ -216,12 +221,17 @@ export class AppComponent implements OnInit, AfterViewInit  {
       this.recognition.stop();
       this.qText = this.inputText;
       // need to do our own NLP.
+      if(this.qText.includes("subject")) {
+        let str = this.qText.split("subject ");
+        this.obj.subject = str[1];
+      }
+      
 
       this.inputText = "";
-      let questions = [{"q":"what is your name", "val":"coMakeIT"}, {"q":"what is your age", "val":"16"}, {"q":"where are you from", "val":"NetherLands"}];
-      for(let i=0; i < questions.length; i++) {
-        if(questions[i].q == this.qText) {
-          this.qText = questions[i].val;
+      for(let i=0; i < this.agendaDetails.length; i++) {
+        if(this.agendaDetails[i].titel == this.obj.subject) {
+          let dt = "October 24th 2019 at 11AM";
+         this.qText = "you have " +this.agendaDetails[i].titel+ " class on " + dt;
           this.readOutLoud(this.qText);
           }
       }
