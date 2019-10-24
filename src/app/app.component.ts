@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, NgZone, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 declare let window;
 @Component({
@@ -25,8 +26,9 @@ export class AppComponent implements OnInit, AfterViewInit  {
   language = 'en-US';
   inputText: any = "";
   qText: any = "";
+  agendaDetails: any;
 
-  constructor(private zone: NgZone, fb: FormBuilder) {
+  constructor(private zone: NgZone, fb: FormBuilder, private http: HttpClient) {
     this.options = fb.group({});
     this.notes = [];
     try {
@@ -42,8 +44,15 @@ export class AppComponent implements OnInit, AfterViewInit  {
    // this.mySelect.open();
   }
 
-  ngOnInit() {
+  getAgendaDetails() {
+    this.http.get('https://my-json-server.typicode.com/bujjibabu/demo/agenda').subscribe((data: any[]) => {
+      this.agendaDetails = data.items;
+      console.log(this.agendaDetails);
+    });
+  }
 
+  ngOnInit() {
+    this.getAgendaDetails();
     /*-----------------------------
           Voice Recognition
     ------------------------------*/
@@ -180,12 +189,13 @@ export class AppComponent implements OnInit, AfterViewInit  {
     speech.pitch = 1;
     window.speechSynthesis.speak(speech);
   }
-  
+
   startListening() {
       this.record().subscribe(
         //listener
         (value) => {
           this.inputText = value;
+
           console.log(value);
         },
         //errror
@@ -205,8 +215,9 @@ export class AppComponent implements OnInit, AfterViewInit  {
     pushQuestion() {
       this.recognition.stop();
       this.qText = this.inputText;
+      // need to do our own NLP.
+
       this.inputText = "";
-      
       let questions = [{"q":"what is your name", "val":"coMakeIT"}, {"q":"what is your age", "val":"16"}, {"q":"where are you from", "val":"NetherLands"}];
       for(let i=0; i < questions.length; i++) {
         if(questions[i].q == this.qText) {
