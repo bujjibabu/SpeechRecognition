@@ -281,7 +281,7 @@ export class AppComponent implements OnInit  {
       for(let i=0; i < this.agendaDetails.length; i++) {
         if(this.agendaDetails[i].titel == this.obj.subject) {
           let dt = "October 24th 2019 at 11AM";
-         this.qText = "you have " +this.agendaDetails[i].titel+ " class on " + dt;
+          this.qText = "you have " +this.agendaDetails[i].titel+ " class on " + dt;
           this.readOutLoud(this.qText);
           }
       }
