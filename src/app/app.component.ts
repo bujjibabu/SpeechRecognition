@@ -4,6 +4,14 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
 declare let window;
+
+export interface IWindow extends Window {
+  webkitSpeechRecognition: any;
+}
+
+const {webkitSpeechRecognition} : IWindow = <IWindow>window;
+const recognition = new webkitSpeechRecognition();
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -28,6 +36,13 @@ export class AppComponent implements OnInit  {
   qText: any = "";
   agendaDetails: any;
   obj: any;
+  matIcon = 'mic_off';
+
+    /****************** New code start ********************/
+    rec: any;
+    interim = '';
+    final = '';
+    /****************** New code end ********************/
 
   constructor(private zone: NgZone, fb: FormBuilder, private http: HttpClient) {
     this.options = fb.group({});
@@ -50,18 +65,53 @@ export class AppComponent implements OnInit  {
   getAgendaDetails() {
     this.http.get('https://my-json-server.typicode.com/bujjibabu/demo/agenda').subscribe((data) => {
       if(data) {
-        this.agendaDetails = data.items;
+        this.agendaDetails = data['items'];
         console.log(this.agendaDetails);
       }
     });
   }
 
   ngOnInit() {
+
     this.getAgendaDetails();
+
+  /****************** New code start ********************/
+
+    this.rec = new webkitSpeechRecognition();
+    this.interim = '';
+    this.final = '';
+    this.rec.continuous = false;
+    this.rec.lang = 'en-US';
+    this.rec.interimResults = true;
+
+    this.rec.onerror = (event) => {
+      console.log('error!');
+    };
+
+    this.rec.onresult =  (event) => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+        this.zone.run(() => {
+          // this.final = this.final.concat(event.results[i][0].transcript);
+          this.final = event.results[i][0].transcript;
+          this.matIcon = 'mic_off';
+          // clearing interim
+          this.interim = '';
+          console.log(event.results[i][0].transcript);
+        });
+        } else {
+          this.interim = '';
+          this.interim = event.results[i][0].transcript;
+        }
+      }
+    };
+
+  /******************************New code end ****************/
+
+
     /*-----------------------------
           Voice Recognition
     ------------------------------*/
-
     // If false, the recording will stop after a few seconds of silence.
     // When true, the silence period is longer (about 15 seconds),
     // allowing us to keep recording even when the user pauses.
@@ -82,6 +132,7 @@ export class AppComponent implements OnInit  {
         // instructions.text('No speech was detected. Try again.');
       };
     }
+
   }
 
   titleStartRecognition() {
@@ -225,7 +276,6 @@ export class AppComponent implements OnInit  {
         let str = this.qText.split("subject ");
         this.obj.subject = str[1];
       }
-      
 
       this.inputText = "";
       for(let i=0; i < this.agendaDetails.length; i++) {
@@ -235,6 +285,12 @@ export class AppComponent implements OnInit  {
           this.readOutLoud(this.qText);
           }
       }
+    }
+
+   // New implementation
+    startVoice() {
+      this.rec.start();
+      this.matIcon = 'mic';
     }
 
 }

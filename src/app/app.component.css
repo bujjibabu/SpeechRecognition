@@ -26,3 +26,7 @@
 .example-container .mat-radio-button {
   margin: 0 12px;
 }
+
+.mic-icon-color {
+  color: red;
+}
