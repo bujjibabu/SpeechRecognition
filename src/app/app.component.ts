@@ -10,7 +10,6 @@ export interface IWindow extends Window {
 }
 
 const {webkitSpeechRecognition} : IWindow = <IWindow>window;
-const recognition = new webkitSpeechRecognition();
 
 @Component({
   selector: 'app-root',
@@ -20,46 +19,21 @@ const recognition = new webkitSpeechRecognition();
 
 export class AppComponent implements OnInit  {
   @ViewChild('mySelect', {static: false}) mySelect: any;
-  speechRecognition: any;
-  recognition: any;
-  noSupport = false;
   noteTextarea: any = '';
-  notes: any;
   options: FormGroup;
   title: any;
   reason: any;
   type: any;
   leaveObj: any;
-  verifySentance: any;
-  language = 'en-US';
-  inputText: any = "";
-  qText: any = "";
+  
   agendaDetails: any;
-  obj: any;
   matIcon = 'mic_off';
-
-    /****************** New code start ********************/
-    rec: any;
-    interim = '';
-    final = '';
-    /****************** New code end ********************/
+  rec: any;
+  interim = '';
+  final = '';
 
   constructor(private zone: NgZone, fb: FormBuilder, private http: HttpClient) {
     this.options = fb.group({});
-    this.notes = [];
-    try {
-      this.speechRecognition = window.SpeechRecognition || window['webkitSpeechRecognition'];
-      this.recognition = new this.speechRecognition();
-    } catch (e) {
-      console.error(e);
-      this.noSupport = true;
-    }
-
-    this.obj = {
-      date: '',
-      time: '',
-      subject: ''
-    };
   }
 
   getAgendaDetails() {
@@ -72,10 +46,7 @@ export class AppComponent implements OnInit  {
   }
 
   ngOnInit() {
-
     this.getAgendaDetails();
-
-  /****************** New code start ********************/
 
     this.rec = new webkitSpeechRecognition();
     this.interim = '';
@@ -97,6 +68,7 @@ export class AppComponent implements OnInit  {
           this.matIcon = 'mic_off';
           // clearing interim
           this.interim = '';
+          this.rec.stop();
           console.log(event.results[i][0].transcript);
         });
         } else {
@@ -106,43 +78,16 @@ export class AppComponent implements OnInit  {
       }
     };
 
-  /******************************New code end ****************/
-
-
-    /*-----------------------------
-          Voice Recognition
-    ------------------------------*/
-    // If false, the recording will stop after a few seconds of silence.
-    // When true, the silence period is longer (about 15 seconds),
-    // allowing us to keep recording even when the user pauses.
-    this.recognition.continuous = true;
-    this.recognition.lang = 'nl-nl';
-    // This block is called every time the Speech APi captures a line.
-
-    this.recognition.onstart = function () {
-      // instructions.text('Voice recognition activated. Try speaking into the microphone.');
-    }
-
-    this.recognition.onspeechend = function () {
-      // instructions.text('You were quiet for a while so voice recognition turned itself off.');
-    }
-
-    this.recognition.onerror = function (event) {
-      if (event.error == 'no-speech') {
-        // instructions.text('No speech was detected. Try again.');
-      };
-    }
-
   }
 
   titleStartRecognition() {
     this.record().subscribe((value) => {
       this.title = value;
-      this.recognition.stop();
+      this.rec.stop();
       console.log(value);
     },
       (err) => {
-        this.recognition.stop();
+        this.rec.stop();
         console.log(err);
         if (err.error === 'no-speech') {
           console.log('--restatring service--');
@@ -151,17 +96,17 @@ export class AppComponent implements OnInit  {
       () => {
         console.log('--complete--');
       });
-    this.recognition.start();
+    this.rec.start();
   }
 
   reasonStartRecognition() {
     this.record().subscribe((value) => {
       this.reason = value;
-      this.recognition.stop();
+      this.rec.stop();
       console.log(value);
     },
       (err) => {
-        this.recognition.stop();
+        this.rec.stop();
         console.log(err);
         if (err.error === 'no-speech') {
           console.log('--restatring service--');
@@ -170,18 +115,18 @@ export class AppComponent implements OnInit  {
       () => {
         console.log('--complete--');
       });
-    this.recognition.start();
+    this.rec.start();
   }
 
   typeStartRecognition() {
     this.record().subscribe((value) => {
       this.type = value;
       this.mySelect.close();
-      this.recognition.stop();
+      this.rec.stop();
       console.log(value);
     },
       (err) => {
-        this.recognition.stop();
+        this.rec.stop();
         console.log(err);
         if (err.error === 'no-speech') {
           console.log('--restatring service--');
@@ -190,31 +135,30 @@ export class AppComponent implements OnInit  {
       () => {
         console.log('--complete--');
       });
-    this.recognition.start();
+    this.rec.start();
   }
 
   submit() {
-    this.recognition.stop();
+    this.rec.stop();
     // need to do Http call
     console.log(this.leaveObj);
   }
 
   verify() {
-    this.recognition.stop();
+    this.rec.stop();
     this.leaveObj = {
       title: 'your title ' + this.title,
       reason: 'your reason ' + this.reason,
       type: 'your type ' + this.type
     };
 
-    this.verifySentance = 'your title ' + this.title  + '  your reason ' + this.reason + 'your type ' + this.type;
-    this.readOutLoud(this.verifySentance);
-    console.log(this.leaveObj);
+    let verifySentance = 'your title ' + this.title  + '  your reason ' + this.reason + 'your type ' + this.type;
+    this.readOutLoud(verifySentance);
   }
 
   record(): Observable<string> {
     return Observable.create(observer => {
-      this.recognition.onresult = event => {
+      this.rec.onresult = event => {
         let term: string = "";
         let current = event.resultIndex;
         // Get a transcript of what was said.
@@ -245,30 +189,16 @@ export class AppComponent implements OnInit  {
     speech.pitch = 1;
     window.speechSynthesis.speak(speech);
   }
-
-  startListening() {
-      this.record().subscribe(
-        //listener
-        (value) => {
-          this.inputText = value;
-
-          console.log(value);
-        },
-        //errror
-        (err) => {
-          console.log(err);
-          if (err.error == "no-speech") {
-            console.log("--restatring service--");
-          }
-        },
-        //completion
-        () => {
-          console.log("--complete--");
-        });
-      this.recognition.start();
+    
+   // New implementation
+    startVoice() {
+      this.rec.start();
+      this.matIcon = 'mic';
     }
 
-    pushQuestion() {
+}
+
+/* pushQuestion() {
       this.recognition.stop();
       this.qText = this.inputText;
       // need to do our own NLP.
@@ -285,12 +215,4 @@ export class AppComponent implements OnInit  {
           this.readOutLoud(this.qText);
           }
       }
-    }
-
-   // New implementation
-    startVoice() {
-      this.rec.start();
-      this.matIcon = 'mic';
-    }
-
-}
+    } */
