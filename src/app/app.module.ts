@@ -9,10 +9,15 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { RestApiService } from './rest-api.service';
+import { LoginComponent } from './login/login.component';
+import { AppRoutingModule } from './app-routing.module';
+import { AgendaComponent } from './agenda/agenda.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginComponent,
+    AgendaComponent
   ],
   imports: [
     BrowserModule,
@@ -23,7 +28,8 @@ import { RestApiService } from './rest-api.service';
     DemoMaterialModule,
     ReactiveFormsModule,
     MatNativeDateModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [RestApiService],
   bootstrap: [AppComponent]
