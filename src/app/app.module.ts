@@ -12,12 +12,14 @@ import { RestApiService } from './rest-api.service';
 import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AgendaComponent } from './agenda/agenda.component';
+import { LeaveComponent } from './leave/leave.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    AgendaComponent
+    AgendaComponent,
+    LeaveComponent
   ],
   imports: [
     BrowserModule,
