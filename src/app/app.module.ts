@@ -7,12 +7,13 @@ import { DemoMaterialModule } from './material-module';
 import { MatNativeDateModule } from '@angular/material/core';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RestApiService } from './rest-api.service';
 import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AgendaComponent } from './agenda/agenda.component';
 import { LeaveComponent } from './leave/leave.component';
+import { InterceptorService } from './interceptor.service';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,7 @@ import { LeaveComponent } from './leave/leave.component';
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [RestApiService],
+  providers: [RestApiService, { provide: HTTP_INTERCEPTORS, useClass: InterceptorService, multi: true }],
   bootstrap: [AppComponent]
 })
 

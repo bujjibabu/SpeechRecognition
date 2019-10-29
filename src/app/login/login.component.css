@@ -7,3 +7,10 @@
   .example-card {
       width: 350px;
   }
+
+  .example-card  .mat-card-actions {
+    text-align: center;
+  }
+  .example-full-width {
+    width: 100%;
+  }

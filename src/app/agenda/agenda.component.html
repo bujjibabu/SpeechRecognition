@@ -9,8 +9,12 @@
     </mat-radio-group>
   </div>
 
+    <ul *ngIf="questions && questions.length > 0" class="questions">
+      <li *ngFor="let item of questions"> {{item}} </li>
+    </ul>
+
   <mat-form-field>
-    <textarea matInput placeholder="Please ask a question for agenda detaills" [(ngModel)]="final"></textarea>
+    <textarea matInput placeholder="Please ask a question for agenda detaills" [(ngModel)]="text1"></textarea>
     <mat-icon matSuffix (click)="startVoice()" class="mic-icon-color">{{matIcon}}</mat-icon>
   </mat-form-field>
 </div>

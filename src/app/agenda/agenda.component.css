@@ -3,10 +3,10 @@
 }
 .example-container {
   top: 20px;
-  padding: 15px 10px 30px 30px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
-  background: #eee;
+  background: #fff;
   width: 50%;
   margin: 0 auto;
   box-shadow: 8px 8px 8px 2px #ccc;
@@ -29,4 +29,15 @@
 
 .mic-icon-color {
   color: red;
+}
+
+.questions {
+  list-style: none;
+  margin: 15px 0;
+  border: 2px solid #ccc;
+  padding: 0px;
+  width: 100%;
+}
+.questions li {
+  padding: 10px;
 }

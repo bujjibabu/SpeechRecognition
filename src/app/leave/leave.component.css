@@ -6,7 +6,7 @@
     padding: 15px 10px 30px 30px;
     display: flex;
     flex-direction: column;
-    background: #eee;
+    background: #fff;
     width: 50%;
     margin: 0 auto;
     box-shadow: 8px 8px 8px 2px #ccc;
@@ -14,24 +14,23 @@
   .example-container > * {
     width: 100%;
   }
-  
+
   .example-container form {
     margin-bottom: 20px;
   }
-  
+
   .example-container form > * {
     margin: 5px 0;
   }
-  
+
   .example-container .mat-radio-button {
     margin: 0 12px;
   }
-  
+
   .example-button-row {
     text-align: center;
   }
-  
+
   .example-button-row button {
     margin: 0 10px;
   }
-  
