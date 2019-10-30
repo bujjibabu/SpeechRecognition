@@ -27,12 +27,12 @@ export class LoginComponent implements OnInit {
   // }
 
   login() {
-    //temp
-    this.router.navigate(["agenda"]);
+
     this.rest.login(this.username, this.password)
       .pipe(first())
       .subscribe(
         data => {
+          this.router.navigate(["agenda"]);
           console.log('success');
         },
         error => {

@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
+import { RestApiService } from '../rest-api.service';
+import { first } from 'rxjs/operators';
 
 declare let window;
 
@@ -32,18 +34,32 @@ export class AgendaComponent implements OnInit  {
   subjects = ['physics','social', 'science', 'maths'];
   questions = [];
 
-  constructor(private zone: NgZone, fb: FormBuilder, private http: HttpClient) {
+  constructor(private zone: NgZone, fb: FormBuilder, private http: HttpClient, private rest: RestApiService) {
     this.options = fb.group({});
   }
 
+  // getAgendaDetails() {
+  //   this.http.get('https://my-json-server.typicode.com/bujjibabu/demo/agenda').subscribe((data) => {
+  //     if(data) {
+  //       this.agendaDetails = data['items'];
+  //       console.log(this.agendaDetails);
+  //     }
+  //   });
+  // }
+
+
   getAgendaDetails() {
-    this.http.get('https://my-json-server.typicode.com/bujjibabu/demo/agenda').subscribe((data) => {
-      if(data) {
-        this.agendaDetails = data['items'];
-        console.log(this.agendaDetails);
-      }
-    });
-  }
+    this.rest.getAgenda()
+      .pipe(first())
+      .subscribe(
+        data => {
+          this.agendaDetails = data;
+          console.log('success');
+        },
+        error => {
+          console.log('error');
+        });
+    }
 
   ngOnInit() {
     this.getAgendaDetails();
@@ -83,17 +99,19 @@ export class AgendaComponent implements OnInit  {
 
   outputResult(txt) {
     let datePipe = new DatePipe('en-US');
-    
+
     if (this.time && this.date) {
       let dtFlag = false;
       this.agendaDetails.filter((item) => {
-        let dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
-        let tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
+        let dt = datePipe.transform(item.dateTimeStart, 'dd/MM/yyyy');
+        let tm = datePipe.transform(item.dateTimeStart, 'hh:mm');
         if(this.date === dt && this.time === tm) {
           let qText = "you have " + item.titel + " class on " + dt + " at " + tm;
           this.questions.push(qText);
           this.readOutLoud(qText);
           dtFlag = true;
+          this.date = "";
+          this.time = "";
         }
       })
 
@@ -109,14 +127,16 @@ export class AgendaComponent implements OnInit  {
     if (this.time && this.subject) {
       let tsFlag = false;
       this.agendaDetails.filter((item) => {
-        let dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
-        let tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
+        let dt = datePipe.transform(item.dateTimeStart, 'dd/MM/yyyy');
+        let tm = datePipe.transform(item.dateTimeStart, 'hh:mm');
         let sub = item.titel.toLowerCase();
         if(this.subject === sub && this.time === tm) {
           let qText = "you have " + item.titel + " class on " + dt + " at " + tm;
           this.questions.push(qText);
           this.readOutLoud(qText);
           tsFlag = true;
+          this.subject = "";
+          this.time = "";
         }
       })
 
@@ -132,14 +152,16 @@ export class AgendaComponent implements OnInit  {
     if (this.date && this.subject) {
       let dsFlag = false;
       this.agendaDetails.filter((item) => {
-        let dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
-        let tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
+        let dt = datePipe.transform(item.dateTimeStart, 'dd/MM/yyyy');
+        let tm = datePipe.transform(item.dateTimeStart, 'hh:mm');
         let sub = item.titel.toLowerCase();
         if(this.date === dt && this.subject === sub) {
           let qText = "you have " + item.titel + " class on " + dt + " at " + tm;
           this.questions.push(qText);
           this.readOutLoud(qText);
           dsFlag = true;
+          this.date = "";
+          this.subject = "";
         }
       })
 

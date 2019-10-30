@@ -13,6 +13,8 @@ export class RestApiService {
 
   agendaUrl: string;
   loginUrl: string;
+  leaveUrl: string;
+  leavesListUrl: string;
   demo: boolean = false;
 
   // Define API
@@ -23,9 +25,12 @@ export class RestApiService {
     if(this.demo) {
       this.agendaUrl = 'https://my-json-server.typicode.com/bujjibabu/demo/agenda';
     } else {
-       this.agendaUrl = 'http://rest-eduario.localhost.topicus.nl:8080/eduario/rest/v1/afspraak';
+       this.agendaUrl = 'http://192.168.27.35:8085/afspraak/afsprakenVoorDeelnemer?deelnemer=';
+       this.loginUrl = 'http://192.168.27.35:8085/auth/signin';
+       this.leaveUrl = "http://192.168.27.35:8085/applyLeave";
+       this.leavesListUrl = 'http://192.168.27.35:8085/getLeaveRequsetsOfUser?username='
     }
-    this.loginUrl = 'xyz';
+
   }
 
   public get currentUserValue(): any {
@@ -42,19 +47,25 @@ export class RestApiService {
         }));
   }
 
-  // applyLeave(title: string, password: string) {
-  //   return this.http.post<any>(this.loginUrl, { username, password })
-  //       .pipe(map(user => {
-  //           // store user details and jwt token in local storage to keep user logged in between page refreshes
-  //           localStorage.setItem('currentUser', JSON.stringify(user));
-  //           this.currentUserSubject.next(user);
-  //           return user;
-  //       }));
-  // }
+  applyLeave(obj) {
+    return this.http.post<any>(this.leaveUrl, obj)
+      .pipe(retry(1),
+        catchError(this.handleError)
+      );
+  }
+
+  getLeaveList(): Observable<any> {
+    return this.http.get<any>(this.leavesListUrl + this.currentUserSubject.value.username)
+      .pipe(
+        retry(1),
+        catchError(this.handleError)
+      );
+  }
+
 
   // HttpClient API get() method => Fetch agenda list
   getAgenda(): Observable<any> {
-    return this.http.get<any>(this.agendaUrl)
+    return this.http.get<any>(this.agendaUrl + this.currentUserSubject.value.username)
       .pipe(
         retry(1),
         catchError(this.handleError)
