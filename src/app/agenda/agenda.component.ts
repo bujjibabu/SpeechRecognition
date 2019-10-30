@@ -48,8 +48,6 @@ export class AgendaComponent implements OnInit  {
   ngOnInit() {
     this.getAgendaDetails();
 
-
-
     this.rec = new webkitSpeechRecognition();
     this.interim = '';
     this.text1 = '';
@@ -85,8 +83,9 @@ export class AgendaComponent implements OnInit  {
 
   outputResult(txt) {
     let datePipe = new DatePipe('en-US');
-
+    
     if (this.time && this.date) {
+      let dtFlag = false;
       this.agendaDetails.filter((item) => {
         let dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
         let tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
@@ -94,11 +93,21 @@ export class AgendaComponent implements OnInit  {
           let qText = "you have " + item.titel + " class on " + dt + " at " + tm;
           this.questions.push(qText);
           this.readOutLoud(qText);
+          dtFlag = true;
         }
       })
+
+      if(!dtFlag) {
+        let qText = "you don't have any class on " + this.date + " at " + this.time + ". Please enter another date and time.";
+        this.questions.push(qText);
+        this.readOutLoud(qText);
+        this.date = "";
+        this.time = "";
+      }
     }
 
     if (this.time && this.subject) {
+      let tsFlag = false;
       this.agendaDetails.filter((item) => {
         let dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
         let tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
@@ -107,11 +116,21 @@ export class AgendaComponent implements OnInit  {
           let qText = "you have " + item.titel + " class on " + dt + " at " + tm;
           this.questions.push(qText);
           this.readOutLoud(qText);
+          tsFlag = true;
         }
       })
+
+      if(!tsFlag) {
+        let qText = "you don't have any " +this.subject+ " class in this week at " + this.time + ". Please enter another subject and time.";
+        this.questions.push(qText);
+        this.readOutLoud(qText);
+        this.subject = "";
+        this.time = "";
+      }
     }
 
     if (this.date && this.subject) {
+      let dsFlag = false;
       this.agendaDetails.filter((item) => {
         let dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
         let tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
@@ -120,8 +139,17 @@ export class AgendaComponent implements OnInit  {
           let qText = "you have " + item.titel + " class on " + dt + " at " + tm;
           this.questions.push(qText);
           this.readOutLoud(qText);
+          dsFlag = true;
         }
       })
+
+      if(!dsFlag) {
+        let qText = "you don't have any " +this.subject+ " class on " + this.date + ". Please enter another subject and date.";
+        this.questions.push(qText);
+        this.readOutLoud(qText);
+        this.date = "";
+        this.subject = "";
+      }
     }
    }
 
@@ -224,29 +252,8 @@ export class AgendaComponent implements OnInit  {
     window.speechSynthesis.speak(speech);
   }
 
-   // New implementation
     startVoice() {
       this.rec.start();
       this.matIcon = 'mic';
     }
-
 }
-
-/* pushQuestion() {
-      this.recognition.stop();
-      this.qText = this.inputText;
-      // need to do our own NLP.
-      if(this.qText.includes("subject")) {
-        let str = this.qText.split("subject ");
-        this.obj.subject = str[1];
-      }
-
-      this.inputText = "";
-      for(let i=0; i < this.agendaDetails.length; i++) {
-        if(this.agendaDetails[i].titel == this.obj.subject) {
-          let dt = "October 24th 2019 at 11AM";
-          this.qText = "you have " +this.agendaDetails[i].titel+ " class on " + dt;
-          this.readOutLoud(this.qText);
-          }
-      }
-    } */
