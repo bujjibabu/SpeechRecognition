@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 
@@ -10,7 +10,7 @@ export interface IWindow extends Window {
   webkitSpeechRecognition: any;
 }
 
-const {webkitSpeechRecognition} : IWindow = <IWindow>window;
+const { webkitSpeechRecognition }: IWindow = <IWindow>window;
 
 @Component({
   selector: 'app-agenda',
@@ -18,7 +18,7 @@ const {webkitSpeechRecognition} : IWindow = <IWindow>window;
   styleUrls: ['./agenda.component.css']
 })
 
-export class AgendaComponent implements OnInit  {
+export class AgendaComponent implements OnInit {
   options: FormGroup;
   agendaDetails: any;
   matIcon = 'mic_off';
@@ -29,7 +29,7 @@ export class AgendaComponent implements OnInit  {
   date: any;
   time: any;
   subject: any;
-  subjects = ['physics','social', 'science', 'maths'];
+  subjects = ['physics', 'social', 'science', 'maths'];
   questions = [];
 
   constructor(private zone: NgZone, fb: FormBuilder, private http: HttpClient) {
@@ -38,8 +38,8 @@ export class AgendaComponent implements OnInit  {
 
   getAgendaDetails() {
     this.http.get('https://my-json-server.typicode.com/bujjibabu/demo/agenda').subscribe((data) => {
-      if(data) {
-        this.agendaDetails = data['items'];
+      if (data) {
+        this.agendaDetails = data.items;
         console.log(this.agendaDetails);
       }
     });
@@ -61,20 +61,20 @@ export class AgendaComponent implements OnInit  {
       console.log('error!');
     };
 
-    this.rec.onresult =  (event) => {
+    this.rec.onresult = (event) => {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
-        this.zone.run(() => {
-          // this.text1 = this.text1.concat(event.results[i][0].transcript);
-          this.text1 = event.results[i][0].transcript;
-          this.matIcon = 'mic_off';
-          // clearing interim
-          this.interim = '';
-          this.rec.stop();
-          this.formatText(this.text1);
-          this.text1 = '';
-          console.log(event.results[i][0].transcript);
-        });
+          this.zone.run(() => {
+            // this.text1 = this.text1.concat(event.results[i][0].transcript);
+            this.text1 = event.results[i][0].transcript;
+            this.matIcon = 'mic_off';
+            // clearing interim
+            this.interim = '';
+            this.rec.stop();
+            this.formatText(this.text1);
+            this.text1 = '';
+            console.log(event.results[i][0].transcript);
+          });
         } else {
           this.interim = '';
           this.interim = event.results[i][0].transcript;
@@ -88,10 +88,10 @@ export class AgendaComponent implements OnInit  {
 
     if (this.time && this.date) {
       this.agendaDetails.filter((item) => {
-        let dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
-        let tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
-        if(this.date === dt && this.time === tm) {
-          let qText = "you have " + item.titel + " class on " + dt + " at " + tm;
+        const dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
+        const tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
+        if (this.date === dt && this.time === tm) {
+          const qText = 'you have ' + item.titel + ' class on ' + dt + ' at ' + tm;
           this.questions.push(qText);
           this.readOutLoud(qText);
         }
@@ -100,11 +100,11 @@ export class AgendaComponent implements OnInit  {
 
     if (this.time && this.subject) {
       this.agendaDetails.filter((item) => {
-        let dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
-        let tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
-        let sub = item.titel.toLowerCase();
-        if(this.subject === sub && this.time === tm) {
-          let qText = "you have " + item.titel + " class on " + dt + " at " + tm;
+        const dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
+        const tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
+        const sub = item.titel.toLowerCase();
+        if (this.subject === sub && this.time === tm) {
+          const qText = 'you have ' + item.titel + ' class on ' + dt + ' at ' + tm;
           this.questions.push(qText);
           this.readOutLoud(qText);
         }
@@ -113,32 +113,32 @@ export class AgendaComponent implements OnInit  {
 
     if (this.date && this.subject) {
       this.agendaDetails.filter((item) => {
-        let dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
-        let tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
-        let sub = item.titel.toLowerCase();
-        if(this.date === dt && this.subject === sub) {
-          let qText = "you have " + item.titel + " class on " + dt + " at " + tm;
+        const dt = datePipe.transform(item.beginDatumTijd, 'dd/MM/yyyy');
+        const tm = datePipe.transform(item.beginDatumTijd, 'hh:mm');
+        const sub = item.titel.toLowerCase();
+        if (this.date === dt && this.subject === sub) {
+          const qText = 'you have ' + item.titel + ' class on ' + dt + ' at ' + tm;
           this.questions.push(qText);
           this.readOutLoud(qText);
         }
       })
     }
-   }
+  }
 
   formatText(txt) {
-    const noSpacesTxt = txt.replace(/ +/g, "");
-    if(!this.time) {
+    const noSpacesTxt = txt.replace(/ +/g, '');
+    if (!this.time) {
       this.time = this.getTime(noSpacesTxt);
     }
-    if(!this.date) {
+    if (!this.date) {
       this.date = this.getDate(noSpacesTxt);
-     }
-     if(!this.subject) {
+    }
+    if (!this.subject) {
       this.subject = this.getSubject(noSpacesTxt);
-     }
+    }
 
     this.questions.push(txt);
-    if (this.time && !this.date && !this.subject)  {
+    if (this.time && !this.date && !this.subject) {
       this.questions.push('Please enter date or subject');
       this.readOutLoud('Please enter date or subject');
     } else if (!this.time && this.date && !this.subject) {
@@ -156,61 +156,61 @@ export class AgendaComponent implements OnInit  {
   getSubject(txt) {
     let sub;
     this.subjects.filter(item => {
-        if (txt.toLowerCase().includes(item)) {
-          sub = item;
-        }
-      });
+      if (txt.toLowerCase().includes(item)) {
+        sub = item;
+      }
+    });
     return sub;
   }
 
   getTime(d) {
     // tslint:disable-next-line: one-variable-per-declaration
-      let hh, min;
-      const result = d.match("[0-9]{2}([\:])[0-9]{2}");
-      if (null != result) {
-          const dateSplitted = result[0].split(result[1]);
-          hh = dateSplitted[0];
-          min = dateSplitted[1];
-      }
-      if(hh && min) {
-        return hh+':'+min;
-      } else {
-        return;
-      }
+    let hh, min;
+    const result = d.match('[0-9]{2}([\:])[0-9]{2}');
+    if (null != result) {
+      const dateSplitted = result[0].split(result[1]);
+      hh = dateSplitted[0];
+      min = dateSplitted[1];
+    }
+    if (hh && min) {
+      return hh + ':' + min;
+    } else {
+      return;
+    }
 
   }
 
   getDate(d) {
-        // tslint:disable-next-line: one-variable-per-declaration
-        let day, month, year;
+    // tslint:disable-next-line: one-variable-per-declaration
+    let day, month, year;
 
-        let result = d.match("[0-9]{2}([\-/ \.])[0-9]{2}[\-/ \.][0-9]{4}");
-        if (null != result) {
-            const dateSplitted = result[0].split(result[1]);
-            day = dateSplitted[0];
-            month = dateSplitted[1];
-            year = dateSplitted[2];
-        }
-        result = d.match("[0-9]{4}([\-/ \.])[0-9]{2}[\-/ \.][0-9]{2}");
-        if(null != result) {
-            const  dateSplitted = result[0].split(result[1]);
-            day = dateSplitted[2];
-            month = dateSplitted[1];
-            year = dateSplitted[0];
-        }
-
-        if ( month > 12) {
-            const aux = day;
-            day = month;
-            month = aux;
-        }
-        if(day && month && year) {
-          return day+'/'+month+'/'+year;
-        } else {
-          return;
-        }
-
+    let result = d.match('[0-9]{2}([\-/ \.])[0-9]{2}[\-/ \.][0-9]{4}');
+    if (null != result) {
+      const dateSplitted = result[0].split(result[1]);
+      day = dateSplitted[0];
+      month = dateSplitted[1];
+      year = dateSplitted[2];
     }
+    result = d.match('[0-9]{4}([\-/ \.])[0-9]{2}[\-/ \.][0-9]{2}');
+    if (null != result) {
+      const dateSplitted = result[0].split(result[1]);
+      day = dateSplitted[2];
+      month = dateSplitted[1];
+      year = dateSplitted[0];
+    }
+
+    if (month > 12) {
+      const aux = day;
+      day = month;
+      month = aux;
+    }
+    if (day && month && year) {
+      return day + '/' + month + '/' + year;
+    } else {
+      return;
+    }
+
+  }
   /*-----------------------------
           Speech Synthesis
   ------------------------------*/
@@ -224,11 +224,11 @@ export class AgendaComponent implements OnInit  {
     window.speechSynthesis.speak(speech);
   }
 
-   // New implementation
-    startVoice() {
-      this.rec.start();
-      this.matIcon = 'mic';
-    }
+  // New implementation
+  startVoice() {
+    this.rec.start();
+    this.matIcon = 'mic';
+  }
 
 }
 
