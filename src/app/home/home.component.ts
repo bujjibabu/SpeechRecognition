@@ -45,6 +45,10 @@ export class HomeComponent implements OnInit {
           // clearing interim
           this.interim = '';
          // this.rec.stop();
+          if (this.input && this.input.trim().toLowerCase().includes('logout')) {
+            this.router.navigate(['login']);
+            this.input = '';
+          }
           this.input = '';
           console.log(event.results[i][0].transcript);
         });

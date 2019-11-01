@@ -1,4 +1,19 @@
+<h1 style="text-align: center;">Dashboard</h1>
 <div class="home">
-    <button (click)="navigate('agenda')">Agenda Search</button>
-    <button (click)="navigate('leave')">Apply Leave</button>
+  <mat-card>
+    <img class="card-img-top" height="250" width="300"
+      src="https://meetingking.com/wp-content/uploads/2012/09/agenda-300.png" alt="Card image cap">
+    <mat-chip-list aria-label="Fish selection">
+      <mat-chip color="accent" selected (click)="navigate('agenda')">Agenda Search</mat-chip>
+    </mat-chip-list>
+  </mat-card>
+  <mat-card>
+    <img class="card-img-top" height="250" width="300"
+      src="https://cdn4.iconfinder.com/data/icons/miscellaneous-31-line/128/vacation_holiday_leave_leisure_travel_relaxing_beach_-512.png"
+      alt="Card image cap">
+      <mat-chip-list aria-label="Fish selection">
+          <mat-chip color="accent" selected (click)="navigate('leave')">Apply Leave</mat-chip>
+        </mat-chip-list>
+  </mat-card>
+
 </div>

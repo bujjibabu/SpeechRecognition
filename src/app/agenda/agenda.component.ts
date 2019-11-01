@@ -85,8 +85,12 @@ export class AgendaComponent implements OnInit {
             if (this.text && this.text.trim().toLowerCase() !== 'yes') {
               this.formatText(this.text);
             }
-            if (this.text && this.text.trim().toLowerCase().includes('homepage')) {
+            if (this.text && this.text.trim().toLowerCase().includes('home')) {
               this.router.navigate(['home']);
+            }
+            if (this.text && this.text.trim().toLowerCase().includes('logout')) {
+              this.router.navigate(['login']);
+              this.text = '';
             }
             this.text = '';
 

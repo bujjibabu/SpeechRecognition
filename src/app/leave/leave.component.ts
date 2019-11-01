@@ -68,10 +68,16 @@ export class LeaveComponent implements OnInit, AfterViewInit {
 
             this.resulttext = event.results[i][0].transcript;
 
-            if (this.resulttext && this.resulttext.trim().toLowerCase().includes('homepage')) {
+            if (this.resulttext && this.resulttext.trim().toLowerCase().includes('home')) {
               this.router.navigate(['home']);
               this.resulttext = '';
             }
+
+            if (this.resulttext && this.resulttext.trim().toLowerCase().includes('logout')) {
+              this.router.navigate(['login']);
+              this.resulttext = '';
+            }
+
 
             if (!this.reason && this.resulttext) {
               this.reason = this.resulttext;
