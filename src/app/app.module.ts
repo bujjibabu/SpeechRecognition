@@ -14,13 +14,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { AgendaComponent } from './agenda/agenda.component';
 import { LeaveComponent } from './leave/leave.component';
 import { InterceptorService } from './interceptor.service';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     AgendaComponent,
-    LeaveComponent
+    LeaveComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
