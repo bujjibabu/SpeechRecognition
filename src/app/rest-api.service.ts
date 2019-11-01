@@ -65,7 +65,11 @@ export class RestApiService {
 
   // HttpClient API get() method => Fetch agenda list
   getAgenda(): Observable<any> {
-    return this.http.get<any>(this.agendaUrl + this.currentUserSubject.value.username)
+    let username;
+    if(this.currentUserSubject.value) {
+      username = this.currentUserSubject.value.username;
+    }
+    return this.http.get<any>(this.agendaUrl + username)
       .pipe(
         retry(1),
         catchError(this.handleError)

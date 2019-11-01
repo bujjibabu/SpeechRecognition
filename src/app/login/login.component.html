@@ -1,3 +1,7 @@
+
+<div class="mic">
+    <mat-icon matSuffix (click)="voiceStart()">{{mic}}</mat-icon>
+</div>
 <div class="login-form">
   <mat-card class="example-card">
     <mat-card-header>
@@ -9,14 +13,14 @@
           <tr>
             <td>
               <mat-form-field class="example-full-width">
-                <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
+                <input matInput #userName placeholder="Username" [(ngModel)]="username" name="username" required>
               </mat-form-field>
             </td>
           </tr>
           <tr>
             <td>
               <mat-form-field class="example-full-width">
-                <input matInput placeholder="Password" [(ngModel)]="password" type="password" name="password" required>
+                <input matInput #pwd placeholder="Password" [(ngModel)]="password" type="password" name="password" required>
               </mat-form-field>
             </td>
           </tr>

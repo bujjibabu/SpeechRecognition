@@ -14,7 +14,7 @@
     </ul>
 
   <mat-form-field>
-    <textarea matInput placeholder="Please ask a question for agenda detaills" [(ngModel)]="text1"></textarea>
-    <mat-icon matSuffix (click)="startVoice()" class="mic-icon-color">{{matIcon}}</mat-icon>
+    <textarea matInput #txtArea placeholder="Please ask a question for agenda detaills" [(ngModel)]="text"></textarea>
+    <!-- <mat-icon matSuffix (click)="startVoice()" class="mic-icon-color">{{matIcon}}</mat-icon> -->
   </mat-form-field>
 </div>

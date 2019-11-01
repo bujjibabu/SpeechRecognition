@@ -1,9 +1,9 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, NgZone, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RestApiService } from '../rest-api.service';
 import { first } from 'rxjs/operators';
+import { SpeechService } from '../speech.service';
+import { Router } from '@angular/router';
 
 declare let window;
 
@@ -18,129 +18,133 @@ const { webkitSpeechRecognition }: IWindow = <IWindow>window;
   templateUrl: './leave.component.html',
   styleUrls: ['./leave.component.css']
 })
-export class LeaveComponent implements OnInit {
-  @ViewChild('mySelect', { static: false }) mySelect: any;
-  noteTextarea: any = '';
-  options: FormGroup;
+export class LeaveComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('reasonId', { static: false }) reasonId: ElementRef;
+  @ViewChild('sdateId', { static: false }) sdateId: ElementRef;
+  @ViewChild('edateId', { static: false }) edateId: ElementRef;
+
   sdate: any;
   edate: any;
   reason: any;
-  type: any;
   leaveObj: any;
   leavesList: any;
-
-  agendaDetails: any;
-  matIcon = 'mic_off';
+  interim: any;
+  resulttext: any;
   rec: any;
   displayedColumns: string[] = ['reason', 'startDate', 'endDate'];
 
-  constructor(private zone: NgZone, fb: FormBuilder, private http: HttpClient, private rest: RestApiService) {
-    this.options = fb.group({});
-  }
+  constructor(private zone: NgZone, private router: Router, private http: HttpClient, private rest: RestApiService, private speech: SpeechService) { }
 
   ngOnInit() {
+    this.leaveList();
+    this.speech.readOutLoud('Now you are in apply leave page.');
     this.rec = new webkitSpeechRecognition();
-    this.rec.continuous = false;
+    this.interim = '';
+    this.resulttext = '';
+    this.rec.continuous = true;
     this.rec.lang = 'en-US';
     this.rec.interimResults = true;
-    this.leaveList();
+    this.rec.maxAlternatives = 3;
+
     this.rec.onerror = (event) => {
       console.log('error!');
     };
 
-  }
+    this.rec.onnomatch = (data) => {
+      console.log('no match found please try again!');
+      // this.readOutLoud('no match found please try again!');
+    };
 
-  startDateRecognition() {
-    this.record().subscribe((value) => {
-      this.sdate = value;
-      this.rec.stop();
-      console.log(value);
-    },
-      (err) => {
-        this.rec.stop();
-        console.log(err);
-        if (err.error === 'no-speech') {
-          console.log('--restatring service--');
+    this.rec.onend = (data) => {
+      console.log('disconnected');
+      // this.readOutLoud('disconnected!');
+    };
+
+    this.rec.onresult = (event) => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          this.zone.run(() => {
+
+            this.resulttext = event.results[i][0].transcript;
+
+            if (this.resulttext && this.resulttext.trim().toLowerCase().includes('homepage')) {
+              this.router.navigate(['home']);
+              this.resulttext = '';
+            }
+
+            if (!this.reason && this.resulttext) {
+              this.reason = this.resulttext;
+              this.sdateId.nativeElement.focus();
+              this.speech.readOutLoud('Pleas enter start date.');
+              this.resulttext = '';
+              this.verify();
+            } else if (!this.sdate && this.resulttext) {
+              this.sdate = this.resulttext;
+              this.edateId.nativeElement.focus();
+              this.speech.readOutLoud('Pleas enter end date.');
+              this.resulttext = '';
+              this.verify();
+            } else if (!this.edate && this.resulttext) {
+              this.edate = this.resulttext;
+              this.resulttext = '';
+              this.verify();
+            }
+
+            this.interim = '';
+            if (this.reason && this.sdate && this.edate && this.resulttext) {
+              if (this.resulttext.trim().toLowerCase() === 'yes' || this.resulttext.trim().toLowerCase() === 'submit') {
+                this.submit();
+              } else {
+                this.reason = '';
+                this.sdate = '';
+                this.edate = '';
+                this.reasonId.nativeElement.focus();
+                this.speech.readOutLoud('please enter details again.');
+              }
+            }
+            console.log(event.results[i][0].transcript);
+          });
+        } else {
+          this.interim = '';
+          this.interim = event.results[i][0].transcript;
         }
-      },
-      () => {
-        console.log('--complete--');
-      });
+      }
+    };
+
     this.rec.start();
   }
 
-  endDateRecognition() {
-    this.record().subscribe((value) => {
-      this.edate = value;
-      this.rec.stop();
-      console.log(value);
-    },
-      (err) => {
-        this.rec.stop();
-        console.log(err);
-        if (err.error === 'no-speech') {
-          console.log('--restatring service--');
-        }
-      },
-      () => {
-        console.log('--complete--');
-      });
-    this.rec.start();
-  }
-
-  reasonStartRecognition() {
-    this.record().subscribe((value) => {
-      this.reason = value;
-      this.rec.stop();
-      console.log(value);
-    },
-      (err) => {
-        this.rec.stop();
-        console.log(err);
-        if (err.error === 'no-speech') {
-          console.log('--restatring service--');
-        }
-      },
-      () => {
-        console.log('--complete--');
-      });
-    this.rec.start();
-  }
-
-  typeStartRecognition() {
-    this.record().subscribe((value) => {
-      this.type = value;
-      this.mySelect.close();
-      this.rec.stop();
-      console.log(value);
-    },
-      (err) => {
-        this.rec.stop();
-        console.log(err);
-        if (err.error === 'no-speech') {
-          console.log('--restatring service--');
-        }
-      },
-      () => {
-        console.log('--complete--');
-      });
-    this.rec.start();
+  ngAfterViewInit() {
+    setTimeout(function() {
+      this.reasonId.nativeElement.focus();
+    }.bind(this), 0);
+    this.speech.readOutLoud('please enter reason for leave');
   }
 
   submit() {
-    this.rec.stop();
-    let obj = {
-      "user": this.rest.currentUserValue.username,
-      "reason": this.reason,
-      "dtStart": new Date(this.sdate),
-      "dtEnd": new Date(this.edate)
+    const obj = {
+      user: this.rest.currentUserValue.username,
+      reason: this.reason,
+      dtStart: new Date(this.sdate),
+      dtEnd: new Date(this.edate)
     };
     this.rest.applyLeave(obj).pipe(first())
       .subscribe(
         data => {
+          this.speech.readOutLoud('your leave has been submitted successfully.');
+          this.reason = '';
+          this.sdate = '';
+          this.edate = '';
+          this.reasonId.nativeElement.focus();
           this.leaveList();
         },
         error => {
+          this.reason = '';
+          this.sdate = '';
+          this.edate = '';
+          this.reasonId.nativeElement.focus();
+          this.speech.readOutLoud('some thing went wrong. please try again.');
           console.log('error');
         });
   }
@@ -158,48 +162,16 @@ export class LeaveComponent implements OnInit {
   }
 
   verify() {
-    this.rec.stop();
     this.leaveObj = {
       reason: 'your reason ' + this.reason,
       sdate: 'your satrt date ' + this.sdate,
       edate: 'your end date ' + this.edate
     };
-
-    let verifySentance = 'your reason is' + this.reason + '. your start date is' + this.sdate + '. your end date is' + this.edate;
-    this.readOutLoud(verifySentance);
+    if (this.reason && this.edate && this.sdate) {
+      // tslint:disable-next-line: max-line-length
+      const verifySentance = 'your reason is' + this.reason + '. your start date is' + this.sdate + '. your end date is' + this.edate + ' . do you want to submit your leave?';
+      this.speech.readOutLoud(verifySentance);
+    }
   }
 
-  record(): Observable<string> {
-    return Observable.create(observer => {
-      this.rec.onresult = event => {
-        let term: string = "";
-        let current = event.resultIndex;
-        // Get a transcript of what was said.
-        let transcript = event.results[current][0].transcript;
-        // Add the current transcript to the contents of our Note.
-        // There is a weird bug on mobile, where everything is repeated twice.
-        // There is no official solution so far so we have to handle an edge case.
-        let mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
-        if (!mobileRepeatBug) {
-          this.noteTextarea = transcript;
-          term = this.noteTextarea;
-        }
-        this.zone.run(() => {
-          observer.next(term);
-        });
-      };
-    });
-  }
-
-  /*-----------------------------
-          Speech Synthesis
-  ------------------------------*/
-  readOutLoud(message) {
-    const speech = new SpeechSynthesisUtterance();
-    speech.text = message;
-    speech.volume = 1;
-    speech.rate = 1;
-    speech.pitch = 1;
-    window.speechSynthesis.speak(speech);
-  }
 }

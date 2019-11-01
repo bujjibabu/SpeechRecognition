@@ -1,5 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
+import { SpeechService } from '../speech.service';
 
 declare let window;
 
@@ -20,10 +21,10 @@ export class HomeComponent implements OnInit {
   input = '';
   language = 'en-US';
 
-  constructor(private zone: NgZone, private router: Router) { }
+  constructor(private zone: NgZone, private router: Router, private ss: SpeechService) { }
 
   ngOnInit() {
-    this.readOutLoud("Now you are in Home page. Would you like to search your Agenda or apply for Leave.");
+    this.ss.readOutLoud("Now you are in Home page. Would you like to search your Agenda or apply for Leave.");
 
     this.rec = new webkitSpeechRecognition();
     this.interim = '';
@@ -57,25 +58,12 @@ export class HomeComponent implements OnInit {
   }
 
   getText(txt) {
-    txt = txt.replace(/ +/g, "");
-    if (txt.toLowerCase().includes('searchagenda')) {
-      this.router.navigate(["agenda"]);
-    } else if (txt.toLowerCase().includes('applyleave')) {
-      this.router.navigate(["leave"]);
+    txt = txt.replace(/ +/g, '');
+    if (txt && txt.toLowerCase().includes('agenda')) {
+      this.router.navigate(['agenda']);
+    } else if (txt && txt.toLowerCase().includes('leave')) {
+      this.router.navigate(['leave']);
     }
-  }
-
-  /*-----------------------------
-          Speech Synthesis
-  ------------------------------*/
-  readOutLoud(message) {
-    console.log('readOutLoud', message);
-    const speech = new SpeechSynthesisUtterance();
-    speech.text = message;
-    speech.volume = 1;
-    speech.rate = 1;
-    speech.pitch = 1;
-    window.speechSynthesis.speak(speech);
   }
 
   navigate(url) {

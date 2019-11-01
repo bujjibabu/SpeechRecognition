@@ -1,22 +1,18 @@
 <h3 style="text-align: center;">Apply leave</h3>
 <div class="example-container">
   <mat-form-field>
-    <input matInput placeholder="Reason" [(ngModel)]="reason">
-    <mat-icon matSuffix (click)="reasonStartRecognition()">mic</mat-icon>
+    <input matInput #reasonId placeholder="Reason" [(ngModel)]="reason">
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="Start Date" [(ngModel)]="sdate">
-    <mat-icon matSuffix (click)="startDateRecognition()">mic</mat-icon>
+    <input matInput  #sdateId placeholder="Start Date" [(ngModel)]="sdate">
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="End Date" [(ngModel)]="edate">
-    <mat-icon matSuffix (click)="endDateRecognition()">mic</mat-icon>
+    <input matInput  #edateId placeholder="End Date" [(ngModel)]="edate">
   </mat-form-field>
 
   <div class="example-button-row">
-    <button mat-raised-button color="secondary" (click)="verify()"> Verify </button>
     <button mat-raised-button color="primary" (click)="submit()"> Submit </button>
   </div>
 
@@ -25,8 +21,8 @@
 <br>
 <br>
 <h3 style="text-align: center;">Leave Details</h3>
-<div class="table-container">
-  <table mat-table [dataSource]="leavesList" class="mat-elevation-z8">
+<div class="table-container" >
+  <table mat-table [dataSource]="leavesList" class="mat-elevation-z8" *ngIf="leavesList && leavesList.length > 0; else NoItems">
     <ng-container matColumnDef="reason">
       <th mat-header-cell *matHeaderCellDef> Reason </th>
       <td mat-cell *matCellDef="let element"> {{element.reason}} </td>
@@ -42,4 +38,9 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+  <ng-template #NoItems>
+      No data available
+  </ng-template>
+
 </div>
+
