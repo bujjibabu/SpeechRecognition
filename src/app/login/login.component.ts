@@ -34,7 +34,13 @@ export class LoginComponent implements OnInit {
 
   constructor(private router: Router, private rest: RestApiService, private speech: SpeechService, private zone: NgZone) { }
 
+  selectLanguage(lang) {
+    this.language = lang;
+    localStorage.setItem('language', this.language);
+  }
+
   ngOnInit() {
+    localStorage.setItem('language', this.language);
     this.rec = new webkitSpeechRecognition();
     this.interim = '';
     this.resulttext = '';
@@ -59,7 +65,8 @@ export class LoginComponent implements OnInit {
             this.resulttext = '';
           } else if (!this.password) {
             this.password = this.resulttext;
-            let verifyCredentials = 'you have entered user name as '+ this.username + ' and password as ' + this.password + '. do you want to continue to login?';
+            // tslint:disable-next-line: max-line-length
+            const verifyCredentials = 'you have entered user name as '+ this.username + ' and password as ' + this.password + '. do you want to continue to login?';
             this.speech.readOutLoud(verifyCredentials);
             this.resulttext = '';
           }

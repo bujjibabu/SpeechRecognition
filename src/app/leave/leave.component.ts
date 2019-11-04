@@ -4,6 +4,7 @@ import { RestApiService } from '../rest-api.service';
 import { first } from 'rxjs/operators';
 import { SpeechService } from '../speech.service';
 import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 declare let window;
 
@@ -44,7 +45,7 @@ export class LeaveComponent implements OnInit, AfterViewInit {
     this.interim = '';
     this.resulttext = '';
     this.rec.continuous = true;
-    this.rec.lang = 'en-US';
+    this.rec.lang = localStorage.getItem('language');
     this.rec.interimResults = true;
     this.rec.maxAlternatives = 3;
 
@@ -87,13 +88,29 @@ export class LeaveComponent implements OnInit, AfterViewInit {
               this.resulttext = '';
               this.verify();
             } else if (!this.sdate && this.resulttext) {
-              this.sdate = this.resulttext;
-              this.edateId.nativeElement.focus();
-              this.speech.readOutLoud('Pleas enter end date.');
+              this.sdate = new Date(this.resulttext.trim());
+              if (this.sdate == 'Invalid Date') {
+                this.speech.readOutLoud('Pleas enter valid start date.');
+                this.sdate = '';
+                this.sdateId.nativeElement.focus();
+              } else {
+                const datePipe = new DatePipe('en-US');
+                this.sdate = datePipe.transform(this.sdate, 'MM/dd/yyyy');
+                this.edateId.nativeElement.focus();
+                this.speech.readOutLoud('Pleas enter end date.');
+              }
               this.resulttext = '';
               this.verify();
             } else if (!this.edate && this.resulttext) {
-              this.edate = this.resulttext;
+              this.edate = new Date(this.resulttext.trim());
+              if (this.edate == 'Invalid Date') {
+                this.speech.readOutLoud('Pleas enter valid end date.');
+                this.edate = '';
+                this.edateId.nativeElement.focus();
+              } else {
+                const datePipe = new DatePipe('en-US');
+                this.edate = datePipe.transform(this.edate, 'MM/dd/yyyy');
+              }
               this.resulttext = '';
               this.verify();
             }

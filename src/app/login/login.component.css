@@ -5,11 +5,12 @@
   }
 
   .example-card {
-      width: 350px;
+      width: 430px;
   }
 
   .example-card  .mat-card-actions {
     text-align: center;
+    margin-bottom: 5px;
   }
   .example-full-width {
     width: 100%;
@@ -27,4 +28,13 @@
   width: auto;
   height: auto;
   cursor: pointer;
+}
+
+.language-selection .mat-radio-button {
+  margin-right: 10px;
+}
+
+.language-selection {
+  text-align: center;
+  margin-top: 30px;
 }
