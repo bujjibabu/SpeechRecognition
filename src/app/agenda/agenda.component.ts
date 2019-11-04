@@ -31,7 +31,7 @@ export class AgendaComponent implements OnInit {
   date: any;
   time: any;
   subject: any;
-  subjects = ['physics', 'social', 'science', 'maths'];
+  subjects = ['physics', 'social', 'science', 'maths', 'english'];
   questions = [];
 
   constructor(private zone: NgZone, fb: FormBuilder, private http: HttpClient, private rest: RestApiService, private router: Router) {

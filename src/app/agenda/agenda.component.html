@@ -1,13 +1,13 @@
 <h3 style="text-align: center;">Agenda Search</h3>
 <div class="example-container">
-  <div>
+  <!-- <div>
     <label>Choose language: </label>
     <mat-radio-group [(ngModel)]="language">
       <mat-radio-button value="en-US">English</mat-radio-button>
       <mat-radio-button value="nl-NL">Dutch</mat-radio-button>
       <mat-radio-button value="es-ES">Spanish </mat-radio-button>
     </mat-radio-group>
-  </div>
+  </div> -->
 
     <ul *ngIf="questions && questions.length > 0" class="questions">
       <li *ngFor="let item of questions"> {{item}} </li>

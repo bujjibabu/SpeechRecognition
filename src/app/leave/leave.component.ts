@@ -34,6 +34,7 @@ export class LeaveComponent implements OnInit, AfterViewInit {
   rec: any;
   displayedColumns: string[] = ['reason', 'startDate', 'endDate'];
 
+  // tslint:disable-next-line: max-line-length
   constructor(private zone: NgZone, private router: Router, private http: HttpClient, private rest: RestApiService, private speech: SpeechService) { }
 
   ngOnInit() {
@@ -160,6 +161,9 @@ export class LeaveComponent implements OnInit, AfterViewInit {
       .subscribe(
         data => {
           this.leavesList = data;
+          this.leavesList.sort(function (a, b) {
+            return <any>new Date(a.startDate) - <any>new Date(b.startDate);
+          });
           console.log('leave s', data);
         },
         error => {

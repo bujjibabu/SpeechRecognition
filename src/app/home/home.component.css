@@ -20,4 +20,5 @@ button {
 mat-chip {
   display: block !important;
   margin: auto !important;
+  cursor: pointer;
 }
