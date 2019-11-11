@@ -8,7 +8,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RestApiService } from './rest-api.service';
+import { RestApiService, Globals  } from './rest-api.service';
 import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AgendaComponent } from './agenda/agenda.component';
@@ -36,7 +36,7 @@ import { HomeComponent } from './home/home.component';
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [RestApiService, { provide: HTTP_INTERCEPTORS, useClass: InterceptorService, multi: true }],
+  providers: [RestApiService, Globals, { provide: HTTP_INTERCEPTORS, useClass: InterceptorService, multi: true }],
   bootstrap: [AppComponent]
 })
 

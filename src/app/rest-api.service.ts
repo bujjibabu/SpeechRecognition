@@ -7,6 +7,11 @@ import { retry, catchError, map } from 'rxjs/operators';
   providedIn: 'root'
 })
 
+
+export class Globals {
+  pwaDemo:boolean = true;
+}
+
 export class RestApiService {
   private currentUserSubject: BehaviorSubject<any>;
     public currentUser: Observable<any>;

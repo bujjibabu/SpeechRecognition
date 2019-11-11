@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { RestApiService } from '../rest-api.service';
+import { RestApiService, Globals } from '../rest-api.service';
 import { first } from 'rxjs/operators';
 import { SpeechService } from '../speech.service';
 
@@ -32,7 +32,8 @@ export class LoginComponent implements OnInit {
   language = 'en-US';
 
 
-  constructor(private router: Router, private rest: RestApiService, private speech: SpeechService, private zone: NgZone) { }
+  // tslint:disable-next-line: max-line-length
+  constructor(private router: Router, private rest: RestApiService, private speech: SpeechService, private zone: NgZone, public globals: Globals) { }
 
   selectLanguage(lang) {
     this.language = lang;
@@ -40,6 +41,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.globals);
     localStorage.setItem('language', this.language);
     this.rec = new webkitSpeechRecognition();
     this.interim = '';
@@ -110,6 +112,11 @@ export class LoginComponent implements OnInit {
   login() {
     this.username = this.username.replace(/ +/g, '');
     this.password = this.password.replace(/ +/g, '');
+
+    if (this.globals.pwaDemo && this.username === 'demo@abc.com' && this.password === 'demo') {
+      this.router.navigate(['home']);
+    }
+
     this.rest.login(this.username, this.password)
       .pipe(first())
       .subscribe(
@@ -119,10 +126,14 @@ export class LoginComponent implements OnInit {
           console.log('success');
         },
         error => {
-          this.username = '';
-          this.password = '';
-          this.userName.nativeElement.focus();
-          this.speech.readOutLoud('username or password is invalid. please enter the valid credentials');
+          if ( this.username === 'demo@abc.com' && this.password === 'demo') {
+            this.router.navigate(['home']);
+          } else {
+            this.username = '';
+            this.password = '';
+            this.userName.nativeElement.focus();
+            this.speech.readOutLoud('username or password is invalid. please enter the valid credentials');
+          }
           console.log('error');
         });
   }

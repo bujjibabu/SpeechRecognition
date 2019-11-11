@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { RestApiService } from '../rest-api.service';
+import { RestApiService, Globals } from '../rest-api.service';
 import { first } from 'rxjs/operators';
 import { SpeechService } from '../speech.service';
 import { Router } from '@angular/router';
@@ -29,14 +29,14 @@ export class LeaveComponent implements OnInit, AfterViewInit {
   edate: any;
   reason: any;
   leaveObj: any;
-  leavesList: any;
+  leavesList: any = [];
   interim: any;
   resulttext: any;
   rec: any;
   displayedColumns: string[] = ['reason', 'startDate', 'endDate'];
 
   // tslint:disable-next-line: max-line-length
-  constructor(private zone: NgZone, private router: Router, private http: HttpClient, private rest: RestApiService, private speech: SpeechService) { }
+  constructor(public globals: Globals, private zone: NgZone, private router: Router, private http: HttpClient, private rest: RestApiService, private speech: SpeechService) { }
 
   ngOnInit() {
     this.leaveList();
@@ -153,6 +153,10 @@ export class LeaveComponent implements OnInit, AfterViewInit {
       dtStart: new Date(this.sdate),
       dtEnd: new Date(this.edate)
     };
+    if (this.globals.pwaDemo) {
+      this.speech.readOutLoud('your leave has been submitted successfully.');
+      this.leavesList.push(obj);
+    }
     this.rest.applyLeave(obj).pipe(first())
       .subscribe(
         data => {
