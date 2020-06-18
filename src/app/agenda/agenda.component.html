@@ -1,20 +1,28 @@
-<h3 style="text-align: center;">Agenda Search</h3>
-<div class="example-container">
-  <!-- <div>
-    <label>Choose language: </label>
-    <mat-radio-group [(ngModel)]="language">
-      <mat-radio-button value="en-US">English</mat-radio-button>
-      <mat-radio-button value="nl-NL">Dutch</mat-radio-button>
-      <mat-radio-button value="es-ES">Spanish </mat-radio-button>
-    </mat-radio-group>
-  </div> -->
+<h3 style="text-align: center;">Image Details</h3>
+<div style="display: flex; flex-direction: row;">
+  <div *ngIf="webCamImage">
+    <img [src]="webCamImage" />
+  </div>
+  <div class="example-container">
+    <mat-form-field>
+      <input matInput  placeholder="Name" [(ngModel)]="formObj.name" id="name">
+    </mat-form-field>
 
-    <ul *ngIf="questions && questions.length > 0" class="questions">
-      <li *ngFor="let item of questions"> {{item}} </li>
-    </ul>
+    <mat-form-field>
+      <input matInput placeholder="Colour" [(ngModel)]="formObj.colour" id="colour">
+    </mat-form-field>
 
-  <mat-form-field>
-    <textarea matInput #txtArea placeholder="Please ask a question for agenda detaills" [(ngModel)]="text"></textarea>
-    <!-- <mat-icon matSuffix (click)="startVoice()" class="mic-icon-color">{{matIcon}}</mat-icon> -->
-  </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Width" [(ngModel)]="formObj.width" id="width">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Height" [(ngModel)]="formObj.height" id="height">
+    </mat-form-field>
+
+    <div class="example-button-row">
+      <button mat-raised-button color="primary" (click)="submit()"> Submit </button>
+    </div>
+  </div>
 </div>
+

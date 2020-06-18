@@ -3,13 +3,22 @@
 }
 .example-container {
   top: 20px;
-  padding: 15px;
+  padding: 15px 10px 30px 30px;
   display: flex;
   flex-direction: column;
   background: #fff;
   width: 50%;
   margin: 0 auto;
   box-shadow: 8px 8px 8px 2px #ccc;
+}
+.table-container {
+  background: #fff;
+  top: 20px;
+  padding: 15px 10px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin: 0 auto;
 }
 .example-container > * {
   width: 100%;
@@ -27,17 +36,14 @@
   margin: 0 12px;
 }
 
-.mic-icon-color {
-  color: red;
+.example-button-row {
+  text-align: center;
 }
 
-.questions {
-  list-style: none;
-  margin: 15px 0;
-  border: 2px solid #ccc;
-  padding: 0px;
-  width: 100%;
+.example-button-row button {
+  margin: 0 10px;
 }
-.questions li {
-  padding: 10px;
+
+table {
+  width: 100%;
 }

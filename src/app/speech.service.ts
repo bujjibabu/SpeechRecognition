@@ -4,9 +4,16 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class SpeechService {
-
+  webcamImage;
   constructor() { }
 
+  setWebcamImage(val) {
+    this.webcamImage = val;
+  }
+
+  getWebcamImage() {
+    return this.webcamImage;
+  }
   /*-----------------------------
           Speech Synthesis
   ------------------------------*/
@@ -16,7 +23,7 @@ export class SpeechService {
     speech.volume = 1;
     speech.rate = 1;
     speech.pitch = 1;
-    speech.lang =  localStorage.getItem('language');
+    speech.lang = localStorage.getItem('language');
     window.speechSynthesis.speak(speech);
   }
 
